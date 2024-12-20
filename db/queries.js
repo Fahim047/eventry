@@ -6,8 +6,14 @@ import {
 } from '@/utils/removeMongoDBId';
 import mongoose from 'mongoose';
 
-export const getAllEvents = async () => {
-	const events = await Event.find().lean();
+export const getAllEvents = async (query) => {
+	let events = [];
+	if (query) {
+		const regex = new RegExp(query, 'i');
+		events = await Event.find({ name: { $regex: regex } }).lean();
+	} else {
+		events = await Event.find().lean();
+	}
 	return removeMongoDBIdFromArray(events);
 };
 
